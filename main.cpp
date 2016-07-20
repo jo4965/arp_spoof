@@ -6,7 +6,7 @@
 #include <arpa/inet.h>
 #include <net/ethernet.h>
 #include <netinet/udp.h>
-#include <net/if_arp.h>    // For changing if_arp.h, we can use arp header.
+#include <net/if_arp.h>    // I changed if_arp.h, for using struct arp header.
 #include <regex.h>
 #include <unistd.h>
 
@@ -16,6 +16,12 @@ void my_regexp(char * src, char * pattern, unsigned char matched[]);
 
 int main(int argc, char * argv[])
 {
+    if( argc != 2 )
+   {
+       printf("Please input victim's IP address properly");
+       return 0;
+   }
+
     char *dev;
     bpf_u_int32 netp;
     char errbuf[PCAP_ERRBUF_SIZE];
@@ -111,7 +117,8 @@ int main(int argc, char * argv[])
     /* 192.168.xxx.xxx -> byte array */
 
     inet_pton(AF_INET, (char *)atkIpAddr , &atk_addr.s_addr);
-    inet_pton(AF_INET, "192.168.32.65", &vic_addr.s_addr);
+    //inet_pton(AF_INET, "192.168.32.65", &vic_addr.s_addr);
+    inet_pton(AF_INET, sys.argv[1], &vic_addr.s_addr);
 
     /*********************************/
 
@@ -238,7 +245,7 @@ int main(int argc, char * argv[])
     free(vicMacAddr);
 
     pcap_close(pcd);
-
+    return 0;
 }
 
 void chMac(unsigned char * macAddr, unsigned char mac_bytes[]) // chaning aa:bb:cc:dd:ee:ff -> network byte order
